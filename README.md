@@ -42,12 +42,12 @@ We may take some inspirations from these papers:
 #### 75% Goal
 
 - Complete the implementation of a coarse-locked version and a fine-locked/lock-free version of cuckoo hashing with testing and debugging to ensure correctness and concurrency safety.
-- The fine-locked/lock-free version should achieve at least 2x speedup over the coarse-locked version.
+- The fine-locked/lock-free version should achieve acceptable speedup over the coarse-locked version.
 
 #### 100% Goal
 
 - Complete the implementation of a coarse-locked version and a fine-locked/lock-free version of cuckoo hashing with testing and debugging to ensure correctness and concurrency safety.
-- The fine-locked/lock-free version should achieve at least 5x speedup over the coarse-locked version. The coarse-locked version suffers from high contention, as the entire hash table is protected by a single lock. By implementing fine-grained locking or lock-free techniques, we can reduce contention by allowing multiple threads to access different parts of the hash table concurrently. This reduction in contention can result in significant performance improvements.
+- The speedup performance of fine-locked/lock-free version should be further improved, compared with the coarse-locked version. The coarse-locked version suffers from high contention, as the entire hash table is protected by a single lock. By implementing fine-grained locking or lock-free techniques, we can reduce contention by allowing multiple threads to access different parts of the hash table concurrently. This reduction in contention can result in significant performance improvements.
 
 #### 125% Goal
 
