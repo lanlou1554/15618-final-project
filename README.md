@@ -1,4 +1,4 @@
-# Optimistic Cuckoo Hashing
+# Parallel Cuckoo Hashing
 Yuanxin Cao, Lan Lou
 Andrew ID: yuanxinc, lanlou
 ### URL
