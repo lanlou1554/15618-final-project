@@ -10,30 +10,29 @@ Andrew ID: yuanxinc, lanlou
 
 ## Summary
 
-We are going to implement the parallel cuckoo hashing in Rust, including coarse-locked, fine-locked/lock-free versions. We also will use suitable workloads to benchmark these three versions.
+The objective of this project is to implement the Particle-in-Cell (PIC) algorithm [1] in a 3D space and parallelize it using the OpenMP library. The parallelization aims to enhance the performance of the PIC simulation, enabling the simulation of larger systems and achieving faster simulation times.
 
 ## Background
 
-Cuckoo hashing is a hashing algorithms offering efficient insertion, lookup, and deletion operations. It utilizes multiple hash functions to determine several potential locations within the hash table for storing a given key-value pair. Cuckoo hashing uses these hash functions to check multiple locations, and try to pick an empty slot.
+In the PIC algorithm, the motion of charged particles is tracked through the Coulomb force between different charged particles. Each particle has attributes such as position and velocity, which evolve over time.
 
-If all designated locations are occupied, the algorithm employs a unique eviction policy to make room for the new element. This involves removing an existing element from one of the occupied locations and re-inserting it using its alternative hash function. This process continues recursively until an empty slot is found or a predefined maximum number of iterations is reached.
+To calculate the effect of particles in a 3D space, the particle charges are interpolated onto a irregular 3D mesh. [2] Similarly, the Coulomb forces computed on the mesh are interpolated back to the particle positions to update their velocities.
 
-The key advantage of cuckoo hashing is its O(1) complexity for lookups and deletions since only one location per hash table is examined. However, insertions can potentially lead to cascading evictions, impacting performance. In short, cuckoo hashing is suitable for read-intensive workloads.
+To parallelize this algorithm using OpenMP, we need to divide the work evenly between the workers. Each worker should calculate the Coulomb forces for a number of charged particles, and then update the positions and the velocities of the charged particles accordingly.
 
-In this project, we will implement parallel version for cuckoo hashing, supporting concurrent reader and writer threads. Also, we will benchmark there different versions under different workloads, to better explore their pros and cons.
 
 ## The Challenge
 
-Parallelizing cuckoo hashing poses significant challenges due to the nature of concurrent access to the hash table. One major obstacle is the risk of deadlock, particularly in scenarios where multiple writers are simultaneously attempting to insert elements into the hash table. During insertion, a new element may need to traverse multiple buckets until it finds an available spot. However, predicting exactly which buckets will be affected is difficult since each move depends on the previous one. This unpredictability makes the application of standard deadlock prevention techniques infeasible, such as acquiring all necessary locks in advance. Without a clear understanding of which locks will be needed, ensuring that concurrent insertions proceed smoothly without risking deadlock becomes a daunting task.
+The first challenge of the project is to correctly model the irregular 3D mesh and the movement of the charged particles. We need to come up with a data representation that can represent different irregular meshes as well as the moving charged particles. We also need to decide how to set the distance within which we calculate the Coulomb force for a given charged particle, so that the algorithm is not too computationally heavy while not losing its simulation accuracy.
 
-Another significant challenge in parallel cuckoo hashing is the occurrence of false misses, especially in situations involving both readers and writers. When a key is in the process of being moved from its original bucket to a new one, it becomes temporarily inaccessible from both locations. During this transitional period, if a reader attempts to look up the key, it may mistakenly conclude that the key does not exist in the hash table, leading to incorrect lookup results. For instance, consider a scenario where key 'b' is being moved from bucket 4 to bucket 1. At the moment when 'b' is neither in its original nor its new bucket, any attempt to look up 'b' would result in a false miss. Addressing this challenge requires ensuring atomicity in insert operations to prevent readers from accessing keys in an inconsistent state.[1]
+In terms of parallelization, the challenge is the workload balancing for each worker in OpenMP. Since the shape of the mesh is irregular, and given the fact that each charged particle should compute the Coulomb force with regard to an area of neighbor charged particles, there could be large number of false sharing if we don't assign work carefully, taking into account the memory access patterns of the algorithms. We may need to do semi-static scheduling because the charged particles are moving and we need to minimize the false sharing of the cache.
 
 ## Resources
 
-We may take some inspirations from these papers:
-1. MemC3: compact and concurrent MemCache with dumber caching and smarter hashing [1]
-2. Algorithmic improvements for fast concurrent Cuckoo hashing [2]
-3. Lock-Free Cuckoo Hashing [3]
+We may take some inspirations from these repositories:
+1. [Parallel Research Tools Kernels](https://github.com/ParRes/Kernels)
+2. [Smilei](https://github.com/SmileiPIC/Smilei)
+3. [ModeRepository](https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/)
 
 ## Goals and Deliverables
 
@@ -93,3 +92,6 @@ We plan to use C++ as our programming language because it has many easy-to-use p
 - Prepare presentation materials for the parallelism competition or any project presentations.
 
 ## Reference
+
+[1] F.H. Harlow (1955). "A Machine Calculation Method for Hydrodynamic Problems". Los Alamos Scientific Laboratory report LAMS-1956.
+[2] Dawson, J.M. (1983). "Particle simulation of plasmas". Reviews of Modern Physics. 55 (2): 403–447.
