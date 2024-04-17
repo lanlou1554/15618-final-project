@@ -8,9 +8,9 @@ Andrew ID: yuanxinc, lanlou
 
 [https://lanlou1554.github.io/15618-final-project/](https://lanlou1554.github.io/15618-final-project/)
 
-Project Proposal: https://github.com/lanlou1554/15618-final-project/blob/main/Project_Proposal.md
+Project Proposal: [https://github.com/lanlou1554/15618-final-project/blob/main/Project_Proposal.md](https://lanlou1554.github.io/15618-final-project/)
 
-Milestone Report: https://github.com/lanlou1554/15618-final-project/blob/main/Milestone_Report.md
+Milestone Report: [https://github.com/lanlou1554/15618-final-project/blob/main/Milestone_Report.md](https://github.com/lanlou1554/15618-final-project/blob/main/Milestone_Report.md)
 
 ## Summary
 
