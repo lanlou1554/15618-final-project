@@ -8,24 +8,27 @@ Andrew ID: yuanxinc, lanlou
 
 [https://lanlou1554.github.io/15618-final-project/](https://lanlou1554.github.io/15618-final-project/)
 
+Project Proposal: https://github.com/lanlou1554/15618-final-project/blob/main/Project_Proposal.md
+
+Milestone Report: https://github.com/lanlou1554/15618-final-project/blob/main/Milestone_Report.md
+
 ## Summary
 
-The objective of this project is to implement the Particle-in-Cell (PIC) algorithm [1] in a 3D space and parallelize it using the OpenMP library. The parallelization aims to enhance the performance of the PIC simulation, enabling the simulation of larger systems and achieving faster simulation times.
+The objective of this project is to implement the Particle-in-Cell (PIC) algorithm [1] in a 3D space and parallelize it using the OpenMP and MPI libraries. The parallelization aims to enhance the performance of the PIC simulation, enabling the simulation of larger systems and achieving faster simulation times.
 
 ## Background
 
 In the PIC algorithm, the motion of charged particles is tracked through the Coulomb force between different charged particles. Each particle has attributes such as position and velocity, which evolve over time.
 
-To calculate the effect of particles in a 3D space, the particle charges are interpolated onto a irregular 3D mesh. [2] Similarly, the Coulomb forces computed on the mesh are interpolated back to the particle positions to update their velocities.
+To calculate the effect of particles in a 3D space, the particle charges are interpolated onto an irregular 3D mesh. [2] Similarly, the Coulomb forces computed on the mesh are interpolated back to the particle positions to update their velocities.
 
-To parallelize this algorithm using OpenMP, we need to divide the work evenly between the workers. Each worker should calculate the Coulomb forces for a number of charged particles, and then update the positions and the velocities of the charged particles accordingly.
+To parallelize this algorithm using OpenMP and MPI, we need to divide the work evenly between the workers. Each worker should calculate the Coulomb forces for a number of charged particles, and then update the positions and the velocities of the charged particles accordingly.
 
+The PIC algorithm loop can be described as follows:
+1. Interpolating the electromagnetic fields at the particle positions.
+2. Computing the new particle velocities and positions.
+3. Computing the new electromagnetic fields on the grid according to the positions of the charged particles.
 
-## The Challenge
-
-The first challenge of the project is to correctly model the irregular 3D mesh and the movement of the charged particles. We need to come up with a data representation that can represent different irregular meshes as well as the moving charged particles. We also need to decide how to set the distance within which we calculate the Coulomb force for a given charged particle, so that the algorithm is not too computationally heavy while not losing its simulation accuracy.
-
-In terms of parallelization, the challenge is the workload balancing for each worker in OpenMP. Since the shape of the mesh is irregular, and given the fact that each charged particle should compute the Coulomb force with regard to an area of neighbor charged particles, there could be large number of false sharing if we don't assign work carefully, taking into account the memory access patterns of the algorithms. We may need to do semi-static scheduling because the charged particles are moving and we need to minimize the false sharing of the cache.
 
 ## Resources
 
@@ -36,34 +39,27 @@ We may take some inspirations from these repositories:
 
 ## Goals and Deliverables
 
-### Goals
+### Goal
 
 #### 75% Goal
 
-- Complete the basic algorithm of 3D PIC (particle-in-cell) simulation, and the initial positions of charged particles are scattered above an irregular 3D mesh. Also, the charged particles can influence each other's position and velocity in every step.
-- Explore basic parallel methods of OpenMP to achieve preliminary speedup performance.
+- Complete the basic algorithm of 3D PIC (particle-in-cell) simulation, and the initial positions of charged particles are scattered above an irregular 3D mesh.
+- Explore basic parallel methods of OpenMP and MPI to achieve preliminary speedup performance.
 
 #### 100% Goal
 
-- Analyze statistics like arithmetic intensity, cache hit rate, communication and synchronization time, and workload per core, and try to improve the parallel performance via OpenMP.
-- The speedup performance of OpenMP version should be at least 4x under 8 cores in GHC machines.
+- Analyze statistics like arithmetic intensity, cache hit rate, communication and synchronization time, and workload per core, and try to improve the parallel performance via OpenMP and MPI.
+- The speedup performance of OpenMP and MPI version should be at least 4x under 8 cores in GHC machines.
 
 #### 125% Goal
 
-Here are 2 different directions:
-
-1. Explore MPI parallel methods:
-- Use MPI to parallelize PIC problem, and also try to improve the performance by collecting and analyzing the above statistics.
-- Benchmark MPI method with OpenMP method, and then analyze the advantages/disadvantages of each method.
-2. Explore more challenging settings:
-- Extend the original algorithm by adding other 3D objects which can give some force to change its velocity direction.
-- Find better ways to improve parallel performance under this new setting.
+- Implement faster serial PIC algorithm, using a hashmap to record the charged particles for one certain grid point, so we don't need to traverse all the particles.
+- Try to better parallelize this faster PIC algorithm, maybe including fine-grained/lock-free implementation of this hashmap.
 
 ### Deliverables
 
 - Performance results under different cores in GHC and PSC, also under different initial position and velocity settings.
 - A deep analysis of the above results, including the things we can improve in the future.
-- A quick demo including the 3D visualization of our PIC results under different initial positions and velocities, also with the display of its parallel performance.
 
 ## Platform Choice
 
@@ -71,27 +67,28 @@ We plan to use C++ as our programming language because it has many easy-to-use p
 
 ## Schedule
 
-### Week 1: Algorithm Code and Basic OpenMP Parallel Implementation (4.8-4.14)
+**4.8-4.16: Serial Algorithm Code and Basic Parallelism via OpenMP (Done)**
 
-- Implement the serial version of 3D PIC algorithm.
-- Try basic methods to parallelize this method via OpenMP.
-  
-### Week 2: Deep Performance Analysis and Parallel Method Improvement (4.15-4.21)
+- Yuanxin, Lan: Implement the serial version of the modified 3D PIC algorithm.
+- Yuanxin, Lan: Implement the basic OpenMP parallel version. When moving particles, we parallelize by particles; while when updating the electromagnetic field grid, we parallelize by grids.
 
-- Analyze the workload balance, cache hit rate, synchronous and communication time.
-- Find a better way to improve the parallel performance.
+**4.17-4.21: Basic OpenMP and MPI Parallelism**
 
-### Week 3: Explore MPI or New Setting (4.22-4.28)
-- Try to finish our 125% goal, including exploring MPI parallel method or parallelize PIC in a more challenging setting.
++ Yuanxin: Basic OpenMP parallel implementation, incluing parallelize by particles and parallelize by grids.
++ Lan: Basic MPI parallel implementation, incluing parallelize by particles and parallelize by grids.
 
-### Week 4: Documentation, Demo, and Finalization (4.29-5.5)
+**4.22-4.25: Deep Performance Analysis and Parallel Mehhod Improvement**
 
-- Document the implementation details, design decisions, and benchmarking results in a comprehensive report.
-- Analyze the performance data to identify strengths, weaknesses, and trade-offs of past parallel version.
-- Summarize key findings, lessons learned, and recommendations for future improvements.
-- Prepare presentation materials for the parallelism competition or any project presentations.
++ Yuanxin: Deep analysis for OpenMP parallel implementation, and improve it.
++ Lan: Deep analysis for MPI parallel implementation, and improve it.
++ If time permits, we also want to explore MPI task stealing.
 
-## Reference
+**4.26-4.29: Explore Faster Serial PIC and Its Parallelism**
 
-[1] F.H. Harlow (1955). "A Machine Calculation Method for Hydrodynamic Problems". Los Alamos Scientific Laboratory report LAMS-1956.
-[2] Dawson, J.M. (1983). "Particle simulation of plasmas". Reviews of Modern Physics. 55 (2): 403–447.
++ Lan: Implement faster serial PIC algorithm, using a hashmap to record the charged particles for one certain grid point, so we don't need to traverse all the particles.
++ Yuanxin: Try to better parallelize this faster PIC algorithm, maybe including fine-grained/lock-free implementation of this hashmap.
+
+**4.30-5.5: Documentation, Poster Event Slides**
+
++ Yuanxin: Conduct sensitive studies for OpenMP and finish final report.
++ Lan:  Conduct sensitive studies for MPI and finish poster event slides.
