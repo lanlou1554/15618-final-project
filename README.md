@@ -12,6 +12,8 @@ Project Proposal: [https://github.com/lanlou1554/15618-final-project/blob/main/P
 
 Milestone Report: [https://github.com/lanlou1554/15618-final-project/blob/main/Milestone_Report.md](https://github.com/lanlou1554/15618-final-project/blob/main/Milestone_Report.md)
 
+Final Report: [https://github.com/lanlou1554/15618-final-project/blob/main/Final_Report.pdf](https://github.com/lanlou1554/15618-final-project/blob/main/Final_Report.pdf)
+
 ## Summary
 
 The objective of this project is to implement the Particle-in-Cell (PIC) algorithm [1] in a 3D space and parallelize it using the OpenMP and MPI libraries. The parallelization aims to enhance the performance of the PIC simulation, enabling the simulation of larger systems and achieving faster simulation times.
